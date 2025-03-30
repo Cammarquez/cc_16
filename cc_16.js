@@ -33,3 +33,30 @@ async function fetchProductsAsync() { //This function fetches product data using
     }
 }
 
+//Task 4
+function displayProducts(products) {
+    const container = document.getElementById('product-container'); // Ensure there's a container with this ID in your HTML
+    container.innerHTML = ''; // Clear any existing content
+
+    products.slice(0, 5).forEach(product => { // Loop through the first 5 products
+        const productDiv = document.createElement('div'); // Create a div for each product
+        productDiv.classList.add('product'); // Add a class for styling
+
+        const img = document.createElement('img'); // Create an img element
+        img.src = product.fields.image[0].url; // Set the image source
+        img.alt = product.fields.name; // Set the alt text
+
+        const name = document.createElement('p'); // Create a paragraph for the product name
+        name.textContent = product.fields.name; // Set the product name
+
+        const price = document.createElement('p'); // Create a paragraph for the product price
+        price.textContent = `$${product.fields.price / 100}`; // Set the product price (assuming price is in cents)
+
+        productDiv.appendChild(img); // Add the image to the product div
+        productDiv.appendChild(name); // Add the name to the product div
+        productDiv.appendChild(price); // Add the price to the product div
+        container.appendChild(productDiv); // Add the product div to the container
+    });
+}
+
+
