@@ -35,10 +35,17 @@ async function fetchProductsAsync() { //This function fetches product data using
 
 //Task 4
 function displayProducts(products) {
-    const container = document.getElementById('product-container'); // Ensure there's a container with this ID in your HTML
+    const dropdown = document.getElementById('company-select'); // Get the dropdown element
+    const selectedCompany = dropdown.value; // Get the selected company
+
+    const container = document.getElementById('product-container'); // Ensure there's a container with this ID in the HTML
     container.innerHTML = ''; // Clear any existing content
 
-    products.slice(0, 5).forEach(product => { // Loop through the first 5 products
+    const filteredProducts = selectedCompany 
+        ? products.filter(product => product.fields.company === selectedCompany) // Filter products by selected company
+        : products; // If no company is selected, show all products
+
+    filteredProducts.slice(0, 5).forEach(product => { // Loop through the first 5 filtered products
         const productDiv = document.createElement('div'); // Create a div for each product
         productDiv.classList.add('product'); // Add a class for styling
 
@@ -59,9 +66,59 @@ function displayProducts(products) {
     });
 }
 
+// Add an event listener to the dropdown to update products when the selection changes
+document.getElementById('company-select').addEventListener('change', async () => {
+    try {
+        const response = await fetch('https://www.course-api.com/javascript-store-products');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const products = await response.json();
+        displayProducts(products); // Update the displayed products based on the selected company
+    } catch (error) {
+        handleError(error); // Handle any errors
+    }
+});
+
 //Task 5
 function handleError(error) { // This function handles errors that occur during the fetch or parsing process.
     console.error('An error occurred:', error.message); // Log the error message to the console
 }
 
+//Task 6
+fetchProductsThen(); // Call the function to fetch products using Promises
+fetchProductsAsync(); // Call the function to fetch products using async/await
+
+//Extra
+async function fetchCompanyNames() {
+    try {
+        const response = await fetch('https://www.course-api.com/javascript-store-products');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const products = await response.json();
+        const companies = [...new Set(products.map(product => product.fields.company))]; // Extract unique company names
+        console.log(companies);
+
+        const dropdown = document.getElementById('company-select'); // Ensure there's a select element with this ID in youbr HTML
+        dropdown.innerHTML = ''; // Clear any existing options
+
+        const noneOption = document.createElement('option'); // Create an option for "None"
+        noneOption.value = ''; // Set the value of the "None" option
+        noneOption.textContent = 'None'; // Set the display text of the "None" option
+        dropdown.appendChild(noneOption); // Add the "None" option to the dropdown
+
+        companies.forEach(company => {
+            const option = document.createElement('option'); // Create an option element
+            option.value = company; // Set the value of the option
+            option.textContent = company; // Set the display text of the option
+            dropdown.appendChild(option); // Add the option to the dropdown
+        });
+
+        return companies; // Return the company names
+    } catch (error) {
+        handleError(error); // Handle any errors
+    }
+}
+fetchCompanyNames(); // Call the function to fetch and log company names
 
