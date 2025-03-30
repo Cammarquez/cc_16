@@ -59,4 +59,9 @@ function displayProducts(products) {
     });
 }
 
+//Task 5
+function handleError(error) { // This function handles errors that occur during the fetch or parsing process.
+    console.error('An error occurred:', error.message); // Log the error message to the console
+}
+
 
